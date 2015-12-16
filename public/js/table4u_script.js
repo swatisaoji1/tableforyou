@@ -1,0 +1,156 @@
+/* 
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
+$(document).ready(function () {
+    $(".t4u_cal").datepicker(
+            {
+                //showOn: "button",
+                //buttonImage: $("#t4u_hideimage").val(),
+                //buttonImageOnly: true,
+                minDate: 0
+            }
+    );
+    $(".t4u_openhour").each(function () {
+        create_hours_option(this, this.getAttribute('openhour'), this.getAttribute('closehour'));
+    });
+});
+
+$(document).ready(function (e) {
+    $('.search-panel .dropdown-menu').find('a').click(function (e) {
+        e.preventDefault();
+        var param = $(this).attr("href").replace("#", "");
+        var concept = $(this).text();
+        $('.search-panel span#search_concept').text(concept);
+        $('.input-group #search_param').val(param);
+    });
+});
+
+
+
+
+var t = 2; //additional tables start at 3
+function addTableInfo() {
+    t++;
+    var table_row = document.createElement('div');
+    var table_break = document.createElement('br');
+    var table_attr = document.createAttribute("class");
+    table_attr.value = "row";
+    table_row.setAttributeNode(table_attr);
+    table_row.innerHTML = '<label class="col-md-3"></label>' +
+            "<div class=\"col-md-3\"><input class=\"form-control\" name=\"tables[" + t + "][desc]\" placeholder=\"Type(Normal, Window, ect.)\" ></div>" +
+            "<div class=\"col-md-3\"><input class=\"form-control\" name=\"tables[" + t + "][seats]\" type=\"number\" placeholder=\"# of seats per table\" ></div>" +
+            "<div class=\"col-md-3\"><input class=\"form-control\" name=\"tables[" + t + "][num]\" type=\"number\" placeholder=\"# of tables available\" ></div>";
+    document.getElementById('tableInfo').appendChild(table_row);
+    document.getElementById('tableInfo').appendChild(table_break);
+}
+var d = 1;//additional tables start at 2
+function addHostTable() {
+    d++;
+    var div = document.createElement('div');
+    div.innerHTML = '<div class="row">' +
+            '<div class="col-md-3"><input class="form-control" id="time_' + d + '" name="time_' + d + '" placeholder="Time" ></div>' +
+            '<div class="col-md-3"><input class="form-control" id="size_' + d + '" name="size_' + d + '" placeholder="Size" ></div>' +
+            '<div class="col-md-3"><input class="form-control" id="name_' + d + '" name="name_' + d + '" placeholder="Name" ></div>' +
+            '<div class="col-md-3"><input class="form-control" id="phone_' + d + '" name="phone_' + d + '" placeholder="Phone No." ></div>' +
+            '<input class="form-control" type="checkbox" value="verified"'
+    '</div><br />';
+    document.getElementById('tableInfoHost').appendChild(div);
+
+}
+
+function activate() //in registration pages, submission button clickable after accepting terms of service
+{
+    check_box = document.getElementById('agree');
+    button = document.getElementById('submit');
+
+    if (check_box.checked === true)
+    {
+        button.disabled = false;
+    }
+    else
+        button.disabled = true;
+}
+
+function passwordValid(input) {
+    if (input.value != document.getElementById('p_word').value) {
+        input.setCustomValidity('Password inputs must match.');
+    } else {
+        // input is valid -- reset the error message
+        input.setCustomValidity('');
+    }
+}
+
+function passwordValidHost(input) {
+    if (input.value != document.getElementById('host_p_word').value) {
+        input.setCustomValidity('Password inputs must match.');
+    } else {
+        // input is valid -- reset the error message
+        input.setCustomValidity('');
+    }
+}
+function t4u_admin_clickable(element) {
+    //console.log(element.getAttribute('href_link'));
+    window.open(element.getAttribute('href_link'));
+}
+
+/*
+ * Create open hour selection 
+ */
+function create_hours_option(element, open, close) {
+    open_hour = parseInt(open.split(":")[0]);
+    close_hour = parseInt(close.split(":")[0]);
+    if (open_hour >= close_hour) {
+        return;
+    }
+    while (open_hour <= close_hour) {
+        opt = document.createElement("option");
+        if (open_hour < 12) {
+            opt.text = open_hour.toString() + ":00 AM";
+        } else if (open_hour === 12) {
+            opt.text = open_hour.toString() + ":00 PM";
+        } else if (open_hour > 12) {
+            opt.text = (open_hour % 12).toString() + ":00 PM";
+        }
+        element.add(opt);
+        open_hour += 1;
+    }
+}
+
+
+function hoursValid() {
+    var opening_time = document.getElementById("opening_time");
+    var openTimeValue = opening_time.options[opening_time.selectedIndex].value;
+    var hourMinO = openTimeValue.split(/[.:]/);
+    var openTime = parseInt(hourMinO[0]);
+    if (parseInt(hourMinO[1]) != 0) {
+        openTime += 0.5;
+    }
+
+    var o_time_specify = document.getElementById("o_time_specify");
+    var openValue = o_time_specify.options[o_time_specify.selectedIndex].value;
+
+    var closing_time = document.getElementById("closing_time");
+    var closeTimeValue = closing_time.options[closing_time.selectedIndex].value;
+    var hourMinC = closeTimeValue.split(/[.:]/);
+    var closeTime = parseInt(hourMinC[0]);
+    if (parseInt(hourMinC[1]) != 0) {
+        closeTime += 0.5;
+    }
+
+    var c_time_specify = document.getElementById("c_time_specify");
+    var closeValue = c_time_specify.options[c_time_specify.selectedIndex].value;
+
+    if (openValue == "PM" && closeValue == "AM") {
+        c_time_specify.setCustomValidity('Hours are invalid');
+    } else if (openValue == "AM" && closeValue == "AM" || openValue == "PM" && closeValue == "PM") {
+        if (openTime >= closeTime) {
+            c_time_specify.setCustomValidity('Hours are invalid');
+        } else {
+            c_time_specify.setCustomValidity('');
+        }
+    } else {
+        c_time_specify.setCustomValidity('');
+    }
+}

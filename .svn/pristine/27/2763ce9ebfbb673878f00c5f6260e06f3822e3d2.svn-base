@@ -1,0 +1,329 @@
+
+<div class="regContainer container"> 
+    <h2>Register Your Restaurant:</h2><br>
+    <form class="form well restaurant-add-form" role="form" data-toggle="validator"
+          action="add" method="post" enctype="multipart/form-data">
+        <div>
+            <h3>Provide Restaurant Information: </h3> 
+            <p><span class="required_marker">*</span> indicates required field</p><br/>
+        </div>
+        
+        <div class="form-group">
+            <div class="row">
+                <label class="col-md-3">Restaurant Owner: <span class="required_marker">*</span></label>
+                <div class="col-md-4">
+                    <input class="form-control" type="text" id='f_name' name="f_name" placeholder="First Name" required>
+                </div>
+                <div class="col-md-4">
+                    <input class="form-control" type="text" id='l_name' name="l_name" placeholder="Last Name" maxlenght="20" required>
+                </div>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <div class="row">
+                <label class="col-md-3">Contact Email: <span class="required_marker">*</span></label>
+                <div class="col-md-8">
+                    <input class="form-control" type="email" id="e_mail" name="e_mail" placeholder="Email" required>
+                </div>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <div class="row">
+                <label class="col-md-3">Create a Password: <span class="required_marker">*</span></label>
+                <div class="col-md-8">
+                    <input class="form-control col-md-5" type="password" id="p_word" name="p_word" 
+                     placeholder="Password" required>
+                </div>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <div class="row">
+                <label class="col-md-3">Repeat Your Password: <span class="required_marker">*</span></label>
+                <div class="col-md-8">
+                    <input class="form-control col-md-5" type="password" id="rep_p_word" 
+                           name="rep_p_word" placeholder="Repeat Password"
+                           oninput="passwordValid(this)"
+                           required>
+                </div>
+            </div>
+        </div>
+        
+        <div class="form-group">
+            <div class="row">
+                <label class="col-md-3">Restaurant Name: <span class="required_marker">*</span></label>
+                <div class="col-md-8">
+                    <input class="form-control" type="text" id="r_name" name="r_name" placeholder="Restaurant Name" required>
+                </div>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <div class="row">
+                <label class="col-md-3"> Restaurant Address: <span class="required_marker">*</span></label>
+                <div class="col-md-8">
+                    <input class="form-control" type="text" id="address" name="address" placeholder="Address" required>
+                </div>
+            </div><br />
+            <div class="row">
+                <label class="col-md-3"></label> 
+                <div class="col-md-3">
+                    <input  class="form-control" type="text" id="city" name="city" placeholder="City" required>
+                </div>
+                <div class="col-md-2">
+                    <input class="form-control" type="text" id="state" name="state" placeholder="State" required>
+                </div>
+                <div class="col-md-3">
+                    <input class="form-control"  type="number" id="zipcode" name="zipcode" placeholder="ZipCode" required>
+                </div>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <div class="row">
+                <label class="col-md-3">Restaurant Phone:<span class="required_marker">*</span><br>(10 Digits Minimum)</label> 
+                <div class="col-md-8">
+                    <input class="form-control" type="tel" pattern=".{10,}" id="p_number" name="p_number" placeholder="XXX-XXX-XXXX" required title="10 Digits minimum" required>
+                </div>
+            </div>
+        </div>
+        <!-- Hide by Yeqing Yan Nov.13 for priority 2 or 3
+        <div class="form-group">
+            <div class="row">
+                <label class="col-md-3">Restaurant Website: </label>
+                <div class="col-md-8">
+                    <input class="form-control" type="text" id="w_site" name="w_site" placeholder="(Optional)" >
+                </div>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <div class="row">
+                <label class="col-md-3">Cuisine Type: </label>
+                <div class="col-md-8">
+                    <input class="form-control" type="text" id="cuisine" name="cuisine" placeholder="e.g. Chinese, Italian, American" >
+                </div>
+            </div>
+        </div>
+        -->
+        <div class="form-group" >
+            <div class="row">
+                <label class="col-md-3">Restaurant Hours: <span class="required_marker">*</span></label>
+                <div class="col-md-9">
+                    <p>Select the hours of operation for your restaurant.</p>
+                    <table class="table">
+                        <tr>
+                            <td><input type="checkbox" name="openday[]" value="0" />Sun</td>
+                            <td><input type="checkbox" name="openday[]" value="1" />Mon</td>
+                            <td><input type="checkbox" name="openday[]" value="2" />Tues</td>
+                            <td><input type="checkbox" name="openday[]" value="3" />Wed</td>
+                            <td><input type="checkbox" name="openday[]" value="4" />Thurs</td>
+                            <td><input type="checkbox" name="openday[]" value="5" />Fri</td>
+                            <td><input type="checkbox" name="openday[]" value="6" />Sat</td>
+                        </tr>
+                        <tr>
+                            <td colspan="2">
+                                <select id="opening_time" name="opening_time" class="form-control" oninput="hoursValid()" required>
+                                    <option value="">Opening Time</option>
+                                    <option value="1:00">1:00</option>
+                                    <option value="1:30">1:30</option>
+                                    <option value="2:00">2:00</option>
+                                    <option value="2:30">2:30</option>
+                                    <option value="3:00">3:00</option>
+                                    <option value="3:30">3:30</option>
+                                    <option value="4:00">4:00</option>
+                                    <option value="4:30">4:30</option>
+                                    <option value="5:00">5:00</option>
+                                    <option value="5:30">5:30</option>
+                                    <option value="6:00">6:00</option>
+                                    <option value="6:30">6:30</option>
+                                    <option value="7:00">7:00</option>
+                                    <option value="7:30">7:30</option>
+                                    <option value="8:00">8:00</option>
+                                    <option value="8:30">8:30</option>
+                                    <option value="9:00">9:00</option>
+                                    <option value="9:30">9:30</option>
+                                    <option value="10:00">10:00</option>
+                                    <option value="10:30">10:30</option>
+                                    <option value="11:00">11:00</option>
+                                    <option value="11:30">11:30</option>
+                                    <option value="12:00">12:00</option>
+                                    <option value="12:30">12:30</option>                   
+                                </select>
+                            </td>
+                            <td colspan="1">
+                                <select  id="o_time_specify" name="o_time_specify" class="form-control" oninput="hoursValid()" required>
+                                    <option value="AM">AM</option>
+                                    <option value="PM">PM</option>                  
+                                </select>
+                            </td>
+
+                            <td colspan="1">to</td>
+                            <td colspan="2">
+                                <select id="closing_time" name="closing_time"class="form-control" oninput="hoursValid()" required>
+                                    <option value="">Closing Time</option>
+                                    <option value="1:00">1:00</option>
+                                    <option value="1:30">1:30</option>
+                                    <option value="2:00">2:00</option>
+                                    <option value="2:30">2:30</option>
+                                    <option value="3:00">3:00</option>
+                                    <option value="3:30">3:30</option>
+                                    <option value="4:00">4:00</option>
+                                    <option value="4:30">4:30</option>
+                                    <option value="5:00">5:00</option>
+                                    <option value="5:30">5:30</option>
+                                    <option value="6:00">6:00</option>
+                                    <option value="6:30">6:30</option>
+                                    <option value="7:00">7:00</option>
+                                    <option value="7:30">7:30</option>
+                                    <option value="8:00">8:00</option>
+                                    <option value="8:30">8:30</option>
+                                    <option value="9:00">9:00</option>
+                                    <option value="9:30">9:30</option>
+                                    <option value="10:00">10:00</option>
+                                    <option value="10:30">10:30</option>
+                                    <option value="11:00">11:00</option>
+                                    <option value="11:30">11:30</option>
+                                    <option value="12:00">12:00</option>
+                                    <option value="12:30">12:30</option>                   
+                                </select>
+                            </td>
+                            <td colspan="1">
+                                <select id="c_time_specify" name="c_time_specify" class="form-control" oninput="hoursValid()" required>
+                                    <option value="AM">AM</option>
+                                    <option value="PM">PM</option>                  
+                                </select >
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <div id='tableInfo'>
+                <div class="row">
+                    <label class="col-md-3">Restaurant Tables: <span class="required_marker">*</span></label> 
+                    <div class="col-md-3">
+                        <input class="form-control" name="tables[0][desc]" placeholder="Type(Normal, Window, ect.)" required >
+                    </div>
+                    <div class="col-md-3">
+                        <input class="form-control" name="tables[0][seats]" type="number" placeholder="# of seats per table" required>
+                    </div>
+                    <div class="col-md-3">
+                        <input class="form-control" name="tables[0][num]" type="number" placeholder="# of tables available" required>
+                    </div>
+                </div><br />
+                <div class="row">
+                    <label class="col-md-3"></label> 
+                    <div class="col-md-3">
+                        <input class="form-control" name="tables[1][desc]" placeholder="Type(Normal, Window, ect.)" >
+                    </div>
+                    <div class="col-md-3">
+                        <input class="form-control" name="tables[1][seats]" type="number" placeholder="# of seats per table" >
+                    </div>
+                    <div class="col-md-3">
+                        <input class="form-control" name="tables[1][num]" type="number" placeholder="# of tables available" >
+                    </div>
+                </div><br />
+                <div class="row">
+                    <label class="col-md-3"></label> 
+                    <div class="col-md-3">
+                        <input class="form-control" name="tables[2][desc]" placeholder="Type(Normal, Window, ect.)" >
+                    </div>
+                    <div class="col-md-3">
+                        <input class="form-control" name="tables[2][seats]" type="number" placeholder="# of seats per table" >
+                    </div>
+                    <div class="col-md-3">
+                        <input class="form-control" name="tables[2][num]" type="number" placeholder="# of tables available" >
+                    </div>
+                </div><br/>
+            </div>
+            <div class="row">
+                <div class="col-md-3">
+                </div>
+                <div class="col-md-3">
+                </div>
+                <div class="col-md-4">
+                </div>
+                <input class="btn btn-default" type="button" id="tableInfo" onclick="addTableInfo()" value="+ add more tables">
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="row">
+                <label class="col-md-3">Restaurant Logo/image:<span class="required_marker">*</span></label>
+                <div class="col-md-8">
+                    <input class="btn btn-default" type="file" name="thumbnailToUpload" id="thumbnailToUpload" accept="image/*" required>
+                    <p>This image will be seen in the search results.</p>
+                </div>
+            </div>
+        </div>
+        <!-- Hide by Yeqing yan at Nov 13 
+        <div class="form-group">
+            <div class="row">
+                <label class="col-md-3">Images (Optional):</label>
+                <div class="col-md-8" >
+                    <input class="btn btn-default" type="file" name="filesToUpload[]" id="filesToUpload" multiple="" >
+                </div>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <div class="row">
+                <label class="col-md-3">Video (Optional):</label>
+                <div class="col-md-8">
+                    <input class="form-control" type="text" id="v_link" name="v_link" placeholder="Video Link" >
+                </div>
+            </div>
+        </div>
+        -->
+        <div>
+            <h3>Create a Host/Hostess Account: </h3> <br />
+        </div>
+        <div class="form-group">
+            <div class="row">
+                <label class="col-md-3">Input Host Email:<span class="required_marker">*</span> </label>
+                <div class="col-md-8">
+                    <input class="form-control" type="email" id="host_u_name" name="host_email" placeholder="Host Email" required>
+                </div>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <div class="row">
+                <label class="col-md-3">Create a Host Password: <span class="required_marker">*</span></label>
+                <div class="col-md-8">
+                    <input class="form-control" type="password" id="host_p_word" name="host_p_word" placeholder="Password" required>
+                </div>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <div class="row">
+                <label class="col-md-3">Repeat Password: <span class="required_marker">*</span></label>
+                <div class="col-md-8">
+                    <input class="form-control col-md-5" type="password" id="p_word" name="p_word" placeholder="Repeat Password" 
+                           oninput="passwordValidHost(this)" required>
+                </div>
+            </div>
+        </div>
+        
+        <div class="form-group">
+            <div class="row">
+                <label class="col-md-3"></label>
+                <div class="col-md-8">
+                    <input type="checkbox" id="agree" value="0" onclick="activate()" /> I agree to the Table for You <a href="#" onclick="window.open('<?php echo PUBLIC_ROOT.'about/terms';?>', '_blank')">Terms of Service</a> and <a href="#" onclick="window.open('<?php echo PUBLIC_ROOT.'about/privacy';?>', '_blank')">Privacy Policy</a>.
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <label class="col-md-8"></label>
+            <div class="col-md-2">
+                <input class="btn btn-default" type="submit" value="Register My Restaurant" name="submit" id="submit" disabled />
+            </div>
+        </div>
+
+    </form>
+</div>

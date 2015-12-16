@@ -1,0 +1,87 @@
+<input type="hidden" id="t4u_hideimage" value="<?php echo PUBLIC_ROOT . 'img/calendar112.png' ?>"/>
+<div id="innerserach" style="padding-top: 20px; padding-bottom: 20px;">
+    <form role="form" action="search" method="post">
+        <div class="container-fluid t4u_searchbar_resultpage">
+            <div class="row t4u_searchbar_row_resultpage">
+                <div class="col-md-10 t4u_searchcol_resultpage" >
+                    <input class ="search t4u_searchbarSearchInput_resultpage" type="text" name="search" placeholder="Location or Restaurant" value="<?php echo $data['search_string'] ?>" required="required"/>
+                </div><div class="col-md-2 t4u_searchcol_resultpage" >
+                    <button class ="btn t4u_searchbarButton_resultpage" type="submit" value="Find Restaurant" name="submit">Find Restaurant</button>
+                </div>
+            </div>
+        </div>    
+    </form>    
+</div>
+<!-- to be implemented
+<button action="" class="btn-link">Clear Search</button>
+-->
+<div class="t4u_search_content">
+    <br>
+    <div class="container-fluid">
+        <div class="row">
+
+            <div class="col-md-8">
+                <?php
+                $localdata = $data['name'];
+                $message = $data['message'];
+                echo '<h4>' . $message . '</h4>';
+                ?>
+            </div>
+        </div>
+    </div>
+    <br>
+    <div class="container-fluid"> 
+        <?php foreach ($localdata as $row) { ?>
+            <div class="row t4u_restaurant-entry-row">
+                <div class ="col-md-12 restaurant-entry">
+                    <div class="col-md-4 restaurant-entry">
+                        <a href="details/<?php echo $row['idRestaurants'] ?>">
+                            <img src="<?php echo PUBLIC_ROOT . 'image/' . $row['Restaurant_Images_idRestaurant_Images'] ?>" alt="" class="img-responsive restaurant-entry-image" />
+                        </a>
+                    </div>
+                    <div class="col-md-8 restaurant-entry-detail-container ">
+                        <div class ="row t4u_restaurant_detail">
+                            <h4>
+                                <?php echo $row['Name'] . '<br>'; ?>
+                            </h4>
+                            <font color="#565A5C">
+                            <h4>
+                                <?php
+                                echo $row['Address'] . ' | '
+                                . $row['State'] . ' | '
+                                . $row['City']
+                                ?>
+                                <br><br><br>
+                            </h4>
+                            </font>
+                        </div>    
+                        <div class ="row t4u_restaurant_detail">
+                            <form class="form-inline restaurant-entry-reserve-form" role="form" action="book_table/<?php echo $row['idRestaurants'] ?>" method="post">
+                                <select class="form-control restaurant-entry-item" name="people" required="required">
+                                    <option value="" disabled selected>People</option>
+                                    <option>2 people</option>
+                                    <option>3 people</option>
+                                    <option>4 people</option>
+                                    <option>5 people</option>
+                                    <option>6 people</option>
+                                    <option>7 people</option>
+                                    <option>8 people</option>
+                                </select> 
+                                <select class="form-control t4u_openhour restaurant-entry-item" name="time" placeholder="Time" openhour='<?php echo $row['Start_Time'] ?>' closehour='<?php echo $row['Close_Time'] ?>' required="required">
+                                    <option value="" disabled selected>Time</option>
+                                </select>  
+                                <!--<div class="input-group restaurant-entry-item">-->
+                                <input class="form-control t4u_cal restaurant-entry-item" type="text" name="date" placeholder="Pick a Date" required="required"/>
+                                <!--    <span class="input-group-addon" id="table4u_calsel"><span class="glyphicon glyphicon-calendar"></span></span>
+                                </div>    -->
+                                <button class ="btn btn-danger restaurant-entry-item    " type="submit"  value="book table" name="submit">Reserve</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        <?php } // end of the loop here
+        ?>
+    </div>
+</div>
+

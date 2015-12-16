@@ -1,0 +1,84 @@
+<?php
+
+class Admin extends Controller {
+
+    public function __construct() {
+        $this->admin = $this->model('Admin_model');
+        $this->restaurant = $this->model('Restaurant_model');
+    }
+
+    public function index() {
+        if (isset($_SESSION['User_type']) && $_SESSION['User_type'] == '4') {
+            $this->home();
+        } else {
+            $this->login();
+        }
+    }
+
+    public function login() {
+        if (filter_input(INPUT_POST, "submit") == "Login") {
+            // username and password sent from form 
+            $username = stripslashes(filter_input(INPUT_POST, "u_name"));
+            $password = stripslashes(filter_input(INPUT_POST, "password"));
+            $result = $this->admin->log_in($username, $password);
+
+            if ($result) {
+                if (defined('SID')) {
+                    session_unset();
+                }
+                $_SESSION['user_login'] = "1";
+                $_SESSION['User_type'] = $result['User_Types_idUser_Types'];
+                $_SESSION['name'] = $result['First_Name'] ." " .$result['Last_Name'];
+                header('Location: '.PUBLIC_ROOT . "admin/home");
+                //$this->view('Admin/home', array('data' => $result));
+                return;
+            }else{
+                $err_messsage = "You are not authorized! contact admin@tableforyou.com OR Try signing in again";
+                $this->view('Admin/login', array('msg' => $err_messsage));
+            }
+        } else {
+            $this->view('Admin/login', array());
+        }
+    }
+   
+    
+   
+    public function logout(){
+       session_unset();
+       session_destroy();
+       $this->view('Admin/login', array());
+    }
+
+    public function reviews() {
+        $this->view('Admin/reviews', array());
+    }
+
+    public function home() {
+        $result = $this->restaurant->get_pending_restaurants();
+        $this->view('Admin/home', $result);
+    }
+    public function settings() {
+        // TODO Show settings.php
+        $this->view('Admin/settings', array());
+    }
+
+    public function users() {
+        // TODO Show users.php
+        $this->view('Admin/users', array());
+    }
+
+    public function forgot() {
+        $this->view('Admin/forgot');
+    }
+
+    public function retrieve() {
+        if (filter_input(INPUT_POST, "submit") == "Retrieve Password") {
+            $e_messsage = "An email has been sent to you.";
+            $this->view('Admin/login', array('msg' => $e_messsage));
+        } else {
+            $this->view('Admin/forgot', array());
+        }
+    }
+
+   
+}

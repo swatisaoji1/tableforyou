@@ -1,0 +1,160 @@
+
+    
+    <?php 
+        // verification success message
+        if(isset($data['msg'])){
+            echo "<div class=\"alert alert-success alert-dismissible alert-div \" >". $data['msg'] 
+                    . "<button type=\"button\" class=\"close\" data-dismiss=\"alert\" aria-label=\"Close\ "
+                    . "<span aria-hidden=\"true\">&times;</span>"
+                    . "</button>"
+                    . "</div>";
+        }
+    ?>
+    <div class="container" id="min-height" style="min-height: 400px">
+        <h2>Welcome to the Host/Hostess screen</h2>
+        <hr>
+        <ul class="nav nav-tabs">
+            <li class="active"><a data-toggle="tab" href="#new_reservations">Upcoming Reservations</a></li>
+            <li><a data-toggle="tab" href="#past_reservations">Past Reservations</a></li>
+        </ul>
+    
+   
+        <div class="tab-content">
+            <div id="new_reservations" class="tab-pane fade in active">
+        <?php
+         if (isset($data['new_data'])) {
+            $reservations = $data['new_data'];
+            if(empty($reservations)){ ?>
+                <div class="row">
+                    <div class="col-md-12">
+                        <h2>There are no reservations.</h2> 
+                    </div>
+                </div>
+            <?php }else{
+                
+            
+        ?>
+        <div class="row">
+            <div class="col-md-12">
+                <h2>Reservations: </h2> 
+            </div>
+        </div>
+        <div class="row">  
+            <div class="col-md-12">
+                <table class="table table-striped" id="tableHost">
+                    <tr>
+                        <th>Date</th>
+                        <th>Time</th>
+                        <th>Guests</th>
+                        <th>Name</th>
+                        <th>Email</th>
+                        <th>Verify</th>
+                    </tr>
+                    <?php
+                   
+                        foreach ($reservations as $row) {
+                            ?>
+                            <tr>
+                                <td>
+                                    <?php
+                                    $t = strtotime($row['Date']);
+                                    echo date('m-d-Y', $t);
+                                    ?>
+                                </td>
+                                <td>
+                                    <?php
+                                    $t = strtotime($row['Start_Time']);
+                                    echo date('h:i A', $t);
+                                    ?>
+                                </td>
+                                <td><?php echo $row['People'] ?></td>
+                                <td><?php echo $row['Name'] ?></td>
+                                <td><?php echo $row['Email'] ?></td>
+                                <?php if($row['Verified'] == 0){ ?>
+                                <td><a type="button" href="<?php echo PUBLIC_ROOT. "host/verify/" .$row['id'] ?>" class="btn btn-danger" value="verify">verify</a></td>
+                                <?php }else{ 
+                                   echo "<td> Verified </td>";
+                                }
+                                ?>
+                             </tr>
+
+                            <?php
+                        }//loop for each reservation
+                    }//else (reservations not empty)
+                }// if data is set
+                    ?>
+                </table>
+            </div>
+        </div>
+        </div>
+            
+            <div id="past_reservations" class="tab-pane fade in">
+                <?php
+                if (isset($data['old_data'])) {
+                   $reservations = $data['old_data'];
+                   if(empty($reservations)){ ?>
+                       <div class="row">
+                           <div class="col-md-12">
+                               <h2>There are no reservations.</h2> 
+                           </div>
+                       </div>
+                   <?php }else{
+                
+            
+        ?>
+        <div class="row">
+            <div class="col-md-12">
+                <h2>Reservations: </h2> 
+            </div>
+        </div>
+        <div class="row">  
+            <div class="col-md-12">
+                <table class="table table-striped" id="tableHost">
+                    <tr>
+                        <th>Date</th>
+                        <th>Time</th>
+                        <th>Guests</th>
+                        <th>Name</th>
+                        <th>Email</th>
+                        <th>Verify</th>
+                    </tr>
+                    <?php
+                   
+                        foreach ($reservations as $row) {
+                            ?>
+                            <tr>
+                                <td>
+                                    <?php
+                                    $t = strtotime($row['Date']);
+                                    echo date('m-d Y', $t);
+                                    ?>
+                                </td>
+                                <td>
+                                    <?php
+                                    $t = strtotime($row['Start_Time']);
+                                    echo date('h:i A', $t);
+                                    ?>
+                                </td>
+                                <td><?php echo $row['People'] ?></td>
+                                <td><?php echo $row['Name'] ?></td>
+                                <td><?php echo $row['Email'] ?></td>
+                                <?php if($row['Verified'] == 0){ ?>
+                                <td><a type="button" href="<?php echo PUBLIC_ROOT. "host/verify/" .$row['id'] ?>" class="btn btn-danger" value="verify" disabled>verify</a></td>
+                                <?php }else{ 
+                                   echo "<td> Verified </td>";
+                                }
+                                ?>
+                             </tr>
+
+                            <?php
+                        }//loop for each reservation
+                    }//else (reservations not empty)
+                }// if data is set
+                    ?>
+                </table>
+            </div>
+        </div>
+                
+            </div>
+        </div>
+    </div>

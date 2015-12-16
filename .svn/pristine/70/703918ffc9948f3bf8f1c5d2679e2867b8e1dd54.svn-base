@@ -1,0 +1,30 @@
+<?php
+
+class Controller {
+
+    public function model($model) {
+        require_once '../app/models/' . $model . '.php';
+        return new $model();
+    }
+
+    public function view($view, $data = array(), $nav = 1) {
+        include_once '../app/views/header.php';
+        if ($nav === 1) {
+            include_once '../app/views/nav.php';
+        }
+        require_once '../app/views/' . $view . '.php';
+        include_once '../app/views/footer.php';
+    }
+
+    public function static_page($page) {
+        include_once '../app/views/header.php';
+        include_once '../app/views/nav.php';
+        include_once APP_ROOT . '/static/' . $page . '.php';
+        include_once '../app/views/footer.php';
+    }
+
+    public function load_partial_view($view) {
+        include_once '../app/views/' . $view . '.php';
+    }
+
+}

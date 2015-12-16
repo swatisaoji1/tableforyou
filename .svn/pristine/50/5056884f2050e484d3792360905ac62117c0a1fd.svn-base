@@ -1,0 +1,58 @@
+README
+======
+
+Website Structure
+=================
+MVC Folder Structure details :
+> app 
+    > controller
+    > core
+    > models
+    > views
+> public
+    > css
+    > js
+    > img
+    
+1) app :
+    - folder contains the application specific code .
+    - Access to this folder is restricted by an .htaccess file located in this folder. 
+    - The folder core:
+        - contains a file App.php 
+            - that is responsible for bootstrapping our application and making its URL's SEO friendly.
+            -  if our URL is group14.com/somemodels/somemethod/first-item, then
+                Controller is somemodels
+                Model is Somemodels_model 
+                Method is somemethod
+                View is somemethod
+                Query String is an array (first-item)
+            - core also contains base controller "Controller.php" , which other controllers extend.
+            - core also included Database.php which is responsible for creating database connections.   
+    -app contains:
+        - a directory "controller" which contains all the controllers
+        - a directory "models" which contains the models
+        - views which contains the views .
+            the folder views contain common files like header.php  and footer.php in its root , these are used by other views to give consistent look to the application.
+        
+    - the root of app folder contains files init.php( which handles includes) and global.php (which contains settings)
+2) public : 
+    - contains application specific js/css/images . 
+    - .htaccess file to our public folder which redirect all calls to index.php. while doing so we make sure make sure that the path requested is not a filename or directory. So there is direct access to files like "/img/someimage.jpeg" if they exists in public folder.
+    - index.php is the access point to our application which does so by calling include on init.php and creating the instance of class App.
+
+
+Why we have app and public folders separate:
+============================================
+This allows us to fine tune access restrictions to these folders. making our application code (app folder) not visible to public,
+while still allowing access to files and folders of public folder available to outside world.
+
+HOWTO deploy in local
+======================
+For local user.
+
+Make sure you change the variable in these files to local path.
+
+1. app/global.php
+2. public/.htaccess
+
+Remember set it back before you commit. Add some comments whenever you do commit.

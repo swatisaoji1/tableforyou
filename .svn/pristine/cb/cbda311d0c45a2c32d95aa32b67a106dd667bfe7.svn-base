@@ -1,0 +1,316 @@
+<?php
+
+class Restaurant extends Controller {
+
+    protected $restaurant;
+    protected $user;
+    protected $review ;
+    public function __construct() {
+        $this->restaurant = $this->model('Restaurant_model');
+        $this->user = $this->model('User_model');
+        $this->review = $this->model('Review_model');
+    }
+
+    public function index() {
+        $this->view('restaurant/index', array());
+    }
+
+    public function find_restaurant() {
+        $this->search();
+    }
+
+    /**
+     * Processes the search form and gets the array of resturant from the model which is passed to the view 'search' allon with the message and search string
+     * @search_string
+     * @return null
+     */
+    public function search($search_string = "") {
+
+        // support back press to search page
+        header('Cache-Control: no cache');
+        session_cache_limiter('private_no_expire');
+        //session_start();
+
+        if (filter_input(INPUT_POST, "submit") == "Find Restaurant") {
+            $search_string = filter_input(INPUT_POST, "search");
+            $_SESSION['search'] = $search_string;  
+        } elseif(isset($_SESSION['search'])){
+            $search_string = $_SESSION['search'];  
+        }else {
+            $search_string ="";   
+        }
+        
+          $result = $this->restaurant->search_restaurant($search_string);
+          if (count($result) === 0) {
+                //if result of search is zero give all resturants with a message
+                $result = $this->restaurant->get_restaurants();
+                $message = "No result for '" . $search_string . "'. These are some restaurants we suggest:";
+            } else {
+                // get the count of the result  and create a message : Your search returned n results
+                $message = "Your search returned " . count($result) . " results";
+            }
+            $this->view('restaurant/search', array('name' => $result,
+                'message' => $message,
+                'search_string' => $search_string));
+    }
+
+    /**
+     * to remove
+     */
+    public function test() {
+        $this->view('restaurant/test');
+    }
+
+    public function get_thumbnail($id) {
+        $thumbnail = $this->restaurant->get_thumbnail($id);
+    }
+
+    public function add() {
+
+        if (filter_input(INPUT_POST, "submit") == "Register My Restaurant") {
+
+            // Create Restaurant Owner 
+            $first_name = stripslashes(filter_input(INPUT_POST, "f_name"));
+            $last_name = stripslashes(filter_input(INPUT_POST, "l_name"));
+            $email = stripslashes(filter_input(INPUT_POST, "e_mail"));
+            $password = stripslashes(filter_input(INPUT_POST, "p_word"));
+            
+            //create restaurant account
+            $result = $this->user->register_user($first_name, $last_name, $email, $password, "5");
+            
+            // Create Restaurant
+            $r_name = str_replace("'", " ", stripslashes(filter_input(INPUT_POST, "r_name")));
+            $address = stripslashes(filter_input(INPUT_POST, "address"));
+            $city = stripslashes(filter_input(INPUT_POST, "city"));
+            $state = stripslashes(filter_input(INPUT_POST, "state"));
+            $zipcode = stripslashes(filter_input(INPUT_POST, "zipcode"));
+            $p_number = str_replace('-', '', stripslashes(filter_input(INPUT_POST, "p_number")));
+            $thumbnail = addslashes(file_get_contents($_FILES["thumbnailToUpload"]["tmp_name"]));
+            $id = $this->restaurant->create_restaurant($r_name, $address, $city, $state, "US", $zipcode, $p_number, $thumbnail);
+
+            /* Insert open hours */
+            $openhour = date("H:i", strtotime(filter_input(INPUT_POST, "opening_time") . " " . filter_input(INPUT_POST, "o_time_specify")));
+            $closehour = date("H:i", strtotime(filter_input(INPUT_POST, "closing_time") . " " . filter_input(INPUT_POST, "c_time_specify")));
+            /* Day start from 0(Sunday) to 6(Saturday) */
+            foreach (filter_input(INPUT_POST, "openday", FILTER_DEFAULT, FILTER_REQUIRE_ARRAY) as $workday) {
+                $result = $this->restaurant->add_restaurant_hours($id, $openhour, $closehour, $workday);
+            }
+
+            /* Create table */
+            $tables = filter_input(INPUT_POST, "tables", FILTER_DEFAULT, FILTER_REQUIRE_ARRAY);
+
+            foreach (filter_input(INPUT_POST, "tables", FILTER_DEFAULT, FILTER_REQUIRE_ARRAY) as $onetable) {
+                if (!empty($onetable['num'])) {
+                    $this->restaurant->add_table($id, $onetable['num'], $onetable['desc'], $onetable['seats']);
+                }
+            }
+
+            /* Create host account */
+            $host_email = stripslashes(filter_input(INPUT_POST, "host_email"));
+            $host_password = stripslashes(filter_input(INPUT_POST, "host_p_word"));
+            $result = $this->user->register_user($r_name, "host", $host_email, $host_password, "3", $id);
+
+            // send to thank you page*/
+            $this->view('restaurant/processing');
+            
+        } else {
+            // redirect to index ??
+            //test
+            $this->view('restaurant/add');
+        }
+    }
+
+    /*
+     * Show restaurant details
+     */
+
+    public function details($id) {
+
+        $result = $this->restaurant->get_restaurant_details($id);
+        $result['reviews'] = $this->get_reviews($id);
+        $this->view('restaurant/details', $result);
+        
+    }
+
+     /**
+     * if table is available for given restaurant make reservations else
+     * take user to details page of the chosen retaurant and give available time
+     * @param type $rest_id
+     */
+    public function book_table($rest_id) {
+        if (filter_input(INPUT_POST, "submit") == "book table") {
+            // Get user inputs
+            $p = stripslashes(filter_input(INPUT_POST, "people"));
+            $people = filter_var($p, FILTER_SANITIZE_NUMBER_INT);
+            $time = date("H:i", strtotime(filter_input(INPUT_POST, "time")));
+            $date = stripslashes(filter_input(INPUT_POST, "date"));
+            $date = date('Y-m-d ', strtotime($date));
+            
+            // check if reaturant table is available
+            list ($available, $table_id) = $this->is_available($people, $date, $time, $rest_id);
+
+
+            if ($available && !is_null($table_id)) {
+                /*if (session_id() == ''){
+                    session_start();
+                }*/
+                $choice = array("people" => $people, "time" => $time, "date" => $date, "table_id" => $table_id);
+                $_SESSION['choice'] = $choice;               
+                $this->make_reservation($rest_id);
+            } else {
+                $this->give_options($rest_id);
+            }
+        } else {
+            $this->make_reservation($rest_id);
+        }
+    }
+ 
+    /*
+     * Checks whether the restaurant is open on given hours and finds the available table
+     * and returns the boolean ( restaurant open or not) and table id .
+     */
+
+    public function is_available($people, $date, $time, $rest_id) {
+        $available = $this->restaurant->is_restaurant_open($rest_id, $date, $time);
+        $table_id = $this->find_table($people, $date, $time, $rest_id);
+        return array($available, $table_id);
+    }
+
+    /*
+     * Finds the table_id i.e available table for given parameters.
+     */
+
+    public function find_table($people, $date, $time, $rest_id) {
+
+        $reserved_tables = $this->restaurant->get_reserved_tables($people, $date, $time, $rest_id);
+        $total_tables = $this->restaurant->get_tables($rest_id, $people);
+        $available_tables = array_diff_assoc($total_tables, $reserved_tables);
+        foreach ($available_tables as $key => $val) {
+            return $key; // return the first table id from available tables
+        }
+    }
+
+    /*
+     * We should give option to select different time for same restaurant or go back to search
+     */
+
+    public function give_options($rest_id) {
+        //TODO implementation details -- priority 2
+        $this->view('restaurant/table_not_available', array());
+    }
+
+    public function make_reservation($rest_id) {
+        /*if (!defined('SID')) {
+            session_start();
+        }*/
+        $choice = $_SESSION['choice'];
+        $result = $this->restaurant->get_restaurant_details($rest_id);
+        if (isset($_SESSION['user_login']) && $_SESSION['user_login'] == 1 && $_SESSION['User_type'] == '2') {
+            $email = $_SESSION['Email'];
+            $name = $_SESSION['name'];
+            $id = $_SESSION['idUsers'];
+            $booked = $this->restaurant->add_reservation($id, $choice['table_id'], $choice['date'], $choice['time'], $choice['people']);
+            if ($booked) {
+                // send email ??
+                $this->reservation_complete($rest_id);
+            }
+        } else {
+            if(isset($_SESSION['User_type']) && ($_SESSION['User_type'] == "4" || $_SESSION['User_type'] == "3") ){
+                session_unset();
+                $_SESSION['choice'] = $choice;    
+            }
+            $this->view('restaurant/make_reservation', array('restaurant' => $result));
+        }
+    }
+
+    public function choose_restaurant($id) {
+        if (filter_input(INPUT_POST, "submit") == "View Details") {
+            $this->reservation($id);
+        } else if (filter_input(INPUT_POST, "submit") == "Reserve Now") {
+            $this->make_reservation($id);
+        } else if (filter_input(INPUT_POST, "submit") == "Make Reserve") {
+            $this->make_reservation($id);
+        } else {
+            echo "Meet error";
+        }
+    }
+
+    public function reservation_complete($rest_id) {
+        //user has given information -> do reservation now
+        if (filter_input(INPUT_POST, "submit") == "Complete Reservation") {
+            // create user 
+            $first_name = stripslashes(filter_input(INPUT_POST, "f_name"));
+            $last_name = stripslashes(filter_input(INPUT_POST, "l_name"));
+            $email = stripslashes(filter_input(INPUT_POST, "e_mail"));
+            $username = $email;
+            $password = "";
+            
+            // add to session
+            $_SESSION['name'] = $first_name . " " . $last_name;
+            $_SESSION['Email'] = $email;
+        
+            //$username = stripslashes(filter_input(INPUT_POST, "u_name"));
+            //$password = stripslashes(filter_input(INPUT_POST, "p_word"));
+
+            // user type is unregistered if this user tries to register again , we make its type 2
+            $result = $this->user->register_user($first_name, $last_name, $email, $password, "1");
+            if (!is_null($result) && $result['msg'] == 'Successfully Registered') {
+                
+                $id = $result['data'];
+                $choice = $_SESSION['choice'];
+                $booked = $this->restaurant->add_reservation($id, $choice['table_id'], $choice['date'], $choice['time'], $choice['people']);
+            } else {
+                //Registration failed
+            }
+        }
+
+        $data = array('msg' => 'success', 'restaurant' => $this->restaurant->get_restaurant_details($rest_id));
+        $this->view('restaurant/reservation_complete', $data);
+    }
+    
+    /*
+     * Approve restaurant
+     * @id: restaurant id
+     * return: none
+     */
+    public function approve($id){
+        $this->restaurant->approve_restaurant($id);
+        header('Location: '. PUBLIC_ROOT . '/restaurant/details/' . $id);
+    }
+    
+    
+    /*
+     * Review Functions
+     */
+    
+    public function post_review($rest_id){
+        if (filter_input(INPUT_POST, "submit") == "post_Review"){
+           $review = stripslashes(filter_input(INPUT_POST, "review"));
+           $user_id = $_SESSION['idUsers'];
+           $this->review->put_review($rest_id,$user_id, $review );  
+           header('Location: '. PUBLIC_ROOT . 'restaurant/details/' . $rest_id);
+        }
+    }
+    
+    public function get_reviews($rest_id){
+        $result = $this->review->get_reviews($rest_id);
+        $results_array= array();
+         while ($row = $result->fetch_assoc()) {
+           $user = $this->user->get_user($row['Users_idUsers']);
+           if($user){
+              $row['user'] = $user->fetch_assoc(); 
+           } 
+           $results_array[] = $row;
+        }
+        return $results_array;
+    }
+    
+    public function is_verified($rest_id){
+        if(isset($_SESSION['user_login']) && $_SESSION['user_login']== 1 && $_SESSION['User_type'] == "2"){
+            $user_id = $_SESSION['idUsers'];
+            return $this->restaurant->is_verified($user_id, $rest_id);
+        }
+        return false;
+    }
+
+}

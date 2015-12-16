@@ -1,0 +1,18 @@
+#If request some/dir/foo not exist, look for any files named foo.* 
+Options -MultiViews
+# Enable rewrite
+RewriteEngine on
+Options +FollowSymLinks
+
+# Show directory content, use -Indexes to hide folder content
+Options +Indexes
+
+# Rewrite url rule
+RewriteBase /~f15g14/
+
+# directory check
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-l
+
+RewriteRule ^(.+)$ index.php?url=$1 [QSA,L]

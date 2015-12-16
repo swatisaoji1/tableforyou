@@ -1,0 +1,13 @@
+<?php
+require_once 'core/App.php';
+require_once 'core/Controller.php';
+require_once 'core/Database.php';
+require_once 'global.php';
+
+function table4u_error($number, $msg, $file, $line, $vars) {
+    echo '<pre>';
+    print_r(debug_print_backtrace());
+    echo '</pre>';
+    echo PHP_EOL;
+}
+set_error_handler('table4u_error');

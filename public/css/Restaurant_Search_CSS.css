@@ -1,0 +1,63 @@
+/*
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+*/
+/* 
+    Created on : Nov 5, 2015, 5:15:49 PM
+    Author     : marina
+*/
+.nav li {
+    display: inline;
+}
+
+.learn-more h3 {
+    font-family: 'Shift', sans-serif;
+    font-size: 18px;
+    font-weight: bold;
+}
+
+.learn-more a {
+    color: #bbb;
+}
+
+#foot_url:hover{
+    color: white;
+    text-decoration: none;
+}
+
+.t4u_searchpage {
+    height: 50px;
+    width: 130px;
+    font-size: 15px;
+    position: relative;
+    top:20px;
+    -webkit-appearance: none;
+    -webkit-border-radius: 0px;
+}
+
+.t4u_filter_container {
+    height: 80px;
+}
+/*
+.t4u_homepage form-control {
+    height: 50px;
+    width: 130px;
+    font-size: 15px;
+    position: relative;
+    top:20px;
+    -webkit-appearance: none;
+    -webkit-border-radius: 0px;
+} */
+
+#price {
+    float: left;
+    margin-left: 300px;
+}
+
+#cuisine {
+    float:left;
+}
+#raiting {
+    float:left;
+}
