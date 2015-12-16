@@ -1,6 +1,22 @@
 README
 ======
 
+MY CONTIBUTION TO THE PROJECT:
+-----------------------------
+ Back End Lead Developer
+ -----------------------
+-> Designed the database schema
+-> Implemented the MVC structure and helping the team understand it.
+-> Implemented the search and table reservation logic
+-> implemented the register, login functionality.
+-> Implemented Host module
+-> implemented the post a review functionality.
+-> implemented the details view of the restaurant.
+-> Helped Team members with Tech lead and Team lead to set up the initial working environment.
+-> Worked with team in documentation and other milestones.
+-> Continuous testing , bug fixing and code review.
+
+
 Website Structure
 =================
 MVC Folder Structure details :
